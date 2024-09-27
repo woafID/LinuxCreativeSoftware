@@ -151,7 +151,7 @@ spinner "Downloading rum"
 sudo cp $HOME/affinity_setup_tmp/rum/rum /usr/local/bin/rum
 
 # Download then extract custom wine binaries specifically made to run Affinity apps better.
-echo "Downloading Wine..."
+echo "Downloading Wine:"
 aria2c $ARIA2_PARAMETERS --out ElementalWarrior-wine.7z  https://github.com/woafID/psychic-engine/releases/download/wine/ElementalWarrior-wine.7z
 
 7z x $HOME/affinity_setup_tmp/ElementalWarrior-wine.7z -o$HOME/affinity_setup_tmp/ &>/dev/null &
@@ -258,7 +258,7 @@ mv $HOME/LinuxCreativeSoftware/Affinity/drive_c/Program\ Files/Affinity/Publishe
 
 # If the user launches the script with --apply-patch, we swap out libaffinity.dll with one that skips activation.
 if [ "$1" = "--apply-patch" ]; then
-  echo "We are not responsible for any use of the products without valid licenses."
+  echo "Any use of the products without valid licenses is your responsibility."
   echo "Applying patch..."
   echo
   aria2c $ARIA2_PARAMETERS --out patched_dlls.7z https://archive.org/download/patched_dlls.7z/patched_dlls.7z

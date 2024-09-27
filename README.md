@@ -20,3 +20,5 @@
 Source for the compiled wine binary: https://gitlab.winehq.org/ElementalWarrior/wine
 
 xkero - Rum: https://gitlab.com/xkero/rum
+
+Wanesty - Guide for installing Affinity products on linux: https://codeberg.org/wanesty/affinity-wine-docs
