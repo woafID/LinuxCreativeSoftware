@@ -105,7 +105,7 @@ fi
 # We add only the new packages that are currently not installed on the system to the package manager command that follows.
 NEW_PACKAGES=()
 
-# Check for packages to install
+# Check if user has some of the packages already installed, then subtract those from the upcoming installation.
 for PACKAGE in $PACKAGES; do
   if [ "$PKG_MANAGER" = "apt" ]; then
     if ! dpkg -s "$PACKAGE" &> /dev/null; then
@@ -123,7 +123,7 @@ for PACKAGE in $PACKAGES; do
 done
 
 
-# Installing the new packages here, on whatever package manager the OS has. Skip the step if no new packages are needed.
+# Installing the new packages here, on whatever package manager the OS has. Skipping the step if no new packages are needed.
 if [ ${#NEW_PACKAGES[@]} -gt 0 ]; then
 
   echo "Installing dependencies:" "${NEW_PACKAGES[@]}"
