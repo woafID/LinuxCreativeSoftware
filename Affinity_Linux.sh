@@ -152,7 +152,7 @@ sudo cp $HOME/affinity_setup_tmp/rum/rum /usr/local/bin/rum
 
 # Download then extract custom wine binaries specifically made to run Affinity apps better.
 echo "Downloading Wine:"
-aria2c $ARIA2_PARAMETERS --out ElementalWarrior-wine.7z  https://github.com/woafID/psychic-engine/releases/download/wine9.13-p3/ElementalWarrior-wine.7z
+aria2c $ARIA2_PARAMETERS --out ElementalWarrior-wine.7z  https://github.com/woafID/LinuxCreativeSoftware/releases/download/wine9.13-p3/ElementalWarrior-wine.7z
 
 7z x $HOME/affinity_setup_tmp/ElementalWarrior-wine.7z -o$HOME/affinity_setup_tmp/ &>/dev/null &
 spinner "Extracting"
