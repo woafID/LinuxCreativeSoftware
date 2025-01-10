@@ -185,7 +185,7 @@ killall zenity
 
 # You can extract these files yourself manually from any windows 10 or 11 installation. Just copy the WinMetadata folder from System32 to this path i specified.
 echo "Downloading WinMetadata..."
-aria2c $ARIA2_PARAMETERS --out winmd.7z https://archive.org/download/win_metadata_mirror/winmd.7z
+aria2c $ARIA2_PARAMETERS --out winmd.7z https://archive.org/download/WinMetadata/winmd.7z
 7z x $HOME/affinity_setup_tmp/winmd.7z -o$HOME/LinuxCreativeSoftware/Affinity/drive_c/windows/system32/WinMetadata &>/dev/null &
 spinner "Extracting"
 
@@ -261,7 +261,7 @@ if [ "$1" = "--apply-patch" ]; then
   echo "Any use of the products without valid licenses is your responsibility."
   echo "Applying patch..."
   echo
-  aria2c $ARIA2_PARAMETERS --out patched_dlls.7z https://archive.org/download/patched_dlls.7z/patched_dlls.7z
+  aria2c $ARIA2_PARAMETERS --out patched_dlls.7z https://archive.org/download/patched_dlls_2.3.1/patched_dlls.7z
   7z x $HOME/affinity_setup_tmp/patched_dlls.7z -o$HOME/affinity_setup_tmp/ &>/dev/null
   echo "Extracting..."
   cp -f $HOME/affinity_setup_tmp/patched_dlls/for_designer/libaffinity.dll $HOME/LinuxCreativeSoftware/Affinity/drive_c/Program\ Files/Affinity/Designer\ 2/
