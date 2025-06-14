@@ -2,6 +2,8 @@
 
 # LinuxCreativeSoftware Installers
 
+Old domain (https://linuxcreativesoftware.xyz) has expired. From now on, use https://woafid.github.io/
+
 ## Usage:
 
 - Download the script you want from the repository (not from Releases).
