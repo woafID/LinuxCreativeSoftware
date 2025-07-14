@@ -131,7 +131,7 @@ if [ ${#NEW_PACKAGES[@]} -gt 0 ]; then
   if [ "$PKG_MANAGER" = "apt" ]; then
     sudo apt install "${NEW_PACKAGES[@]}" -y
   elif [ "$PKG_MANAGER" = "pacman" ]; then
-    sudo pacman -Sy "${NEW_PACKAGES[@]}" --noconfirm
+    sudo pacman -Syu "${NEW_PACKAGES[@]}" --noconfirm
   elif [ "$PKG_MANAGER" = "dnf" ]; then
     sudo dnf install "${NEW_PACKAGES[@]}" -y
   fi
