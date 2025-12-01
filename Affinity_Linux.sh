@@ -217,7 +217,7 @@ chmod u+x $HOME/LinuxCreativeSoftware/Affinity/drive_c/launchers/Affinity.sh
 
 # Downloading icons from Serif's server.
 mkdir -p $HOME/LinuxCreativeSoftware/Affinity/drive_c/launchers/icos
-echo "Creating Designer icon..."
+echo "Creating icon..."
 aria2c --console-log-level=warn --dir $HOME/LinuxCreativeSoftware/Affinity/drive_c/launchers/icos/ --out Affinity.svg https://upload.wikimedia.org/wikipedia/commons/c/cf/Affinity_%28App%29_Logo.svg &>/dev/null
 mkdir -p "$HOME/.local/share/applications"
 
@@ -225,7 +225,7 @@ mkdir -p "$HOME/.local/share/applications"
 #The backslashes (\) before and after the variable $HOME_DIR in the Exec line are used to escape the double quotes (") surrounding the path.
 HOME_DIR=$HOME
 
-DESKTOP_CONTENT_DESIGNER="[Desktop Entry]
+DESKTOP_CONTENT="[Desktop Entry]
 Version=1.0
 Type=Application
 Terminal=false
@@ -234,7 +234,7 @@ Name=Affinity
 Icon=$HOME_DIR/LinuxCreativeSoftware/Affinity/drive_c/launchers/icos/Affinity.svg
 Categories=ConsoleOnly;System;"
 
-echo "$DESKTOP_CONTENT_DESIGNER" > "$HOME/.local/share/applications/Affinity.desktop"
+echo "$DESKTOP_CONTENT" > "$HOME/.local/share/applications/Affinity.desktop"
 
 # Set renderrer to vulkan, to better support recent hardware. If you have issues, try replacing "vulkan" with "gl"
 rum ElementalWarrior-8.14 $HOME/LinuxCreativeSoftware/Affinity winetricks renderer=vulkan &>/dev/null &
