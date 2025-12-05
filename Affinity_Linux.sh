@@ -1,20 +1,20 @@
 #!/usr/bin/env bash
 
-# Code functionality is commented to help everybody, including Linux beginners to better understand what is being run on their system.
-
 # Functionality to clean up if the user presses Ctrl+C to abort the installation. This prevents users from having an incomplete/broken setup.
 trap '
+    clear
     echo "Operation interrupted... Cleaning up..."
 
     # Remove temporary setup files
+    killall -9 winetricks zenity wineboot &> /dev/null
     rm -fr $HOME/affinity_setup_tmp
 
     # Remove Affinity-related files and directories
     rm -fr $HOME/LinuxCreativeSoftware
-    rm $HOME/.local/share/applications/Affinity.desktop
+    rm -f $HOME/.local/share/applications/Affinity.desktop
 
     # Remove the rum command
-    echo Due to insufficient permissions, please remove the following files manually:
+    echo Run the script again with the --uninstall parameter to remove the leftover files:
     echo /usr/local/bin/rum
     echo /opt/wines
 
@@ -27,27 +27,30 @@ if [ "$EUID" -eq 0 ]; then
     exit 1
 fi
 
+# Uninstallation
+AFFINITY_EXE="$HOME/LinuxCreativeSoftware/Affinity/drive_c/Program Files/Affinity/Affinity/Affinity.exe"
+
 # If users launch with --uninstall, revert all modifications.
 if [ "$1" = "--uninstall" ]; then
-  echo "Are you sure you want to remove Linux Affinity and all of its related files? (Y/N)"
+  echo "Are you sure you want to remove Affinity and all of its related files? (Y/N)"
   read -r response
 
   if [[ $response =~ ^[Yy]$ ]]; then
-    rm -fr $HOME/affinity_setup_tmp
-    rm -fr $HOME/LinuxCreativeSoftware
-    rm -f $HOME/.local/share/applications/affinity_designer.desktop
-    rm -f $HOME/.local/share/applications/affinity_photo.desktop
-    rm -f $HOME/.local/share/applications/affinity_publisher.desktop
-    rm -f $HOME/.local/share/applications/Affinity.desktop
+    rm -fr "$HOME/affinity_setup_tmp"
+    rm -fr "$HOME/LinuxCreativeSoftware"
+    rm -f "$HOME/.local/share/applications/Affinity.desktop"
+    # These three are for older versions.
+    rm -f "$HOME/.local/share/applications/affinity_designer.desktop"
+    rm -f "$HOME/.local/share/applications/affinity_photo.desktop"
+    rm -f "$HOME/.local/share/applications/affinity_publisher.desktop"
+
     echo
     echo "Elevation is required to remove the following:"
     echo "/usr/local/bin/rum"
     echo "/opt/wines"
-    echo
-
     sudo rm -f /usr/local/bin/rum
     sudo rm -fr /opt/wines
-    echo Removal of Affinity has finished.
+    echo "Removal of Affinity has finished."
     exit 0
   else
     echo "Removal of Affinity has been cancelled."
@@ -55,6 +58,34 @@ if [ "$1" = "--uninstall" ]; then
   fi
 fi
 
+# If already installed and no --uninstall flag, offer uninstall then continue/exit.
+if [ -f "$AFFINITY_EXE" ]; then
+  echo "Affinity is already installed. Do you want to uninstall it? (Y/N)"
+  echo "If you want to update it, press Y and run the script again."
+  read -r response
+
+  if [[ $response =~ ^[Yy]$ ]]; then
+    rm -fr "$HOME/affinity_setup_tmp"
+    rm -fr "$HOME/LinuxCreativeSoftware"
+    rm -f "$HOME/.local/share/applications/Affinity.desktop"
+    # These three are for older versions.
+    rm -f "$HOME/.local/share/applications/affinity_designer.desktop"
+    rm -f "$HOME/.local/share/applications/affinity_photo.desktop"
+    rm -f "$HOME/.local/share/applications/affinity_publisher.desktop"
+
+    echo
+    echo "Elevation is required to remove the following:"
+    echo "/usr/local/bin/rum"
+    echo "/opt/wines"
+    sudo rm -f /usr/local/bin/rum
+    sudo rm -fr /opt/wines
+    echo "Removal of Affinity has finished."
+    exit 0
+  else
+    echo "Keeping existing Affinity installation."
+    exit 0
+  fi
+fi
 
 # An animated loading spinner, which is later invoked by the   spinner "Current_Task_Name_Here"   function.
 spinner(){
@@ -123,30 +154,39 @@ if [ ${#NEW_PACKAGES[@]} -gt 0 ]; then
   sleep 0.4
   if [ "$PKG_MANAGER" = "apt" ]; then
     sudo apt install "${NEW_PACKAGES[@]}" -y
+    sleep 0.4
+    clear
   elif [ "$PKG_MANAGER" = "pacman" ]; then
     sudo pacman -Syu "${NEW_PACKAGES[@]}" --noconfirm
+    sleep 0.4
+    clear
   elif [ "$PKG_MANAGER" = "dnf" ]; then
     sudo dnf install "${NEW_PACKAGES[@]}" -y
+    sleep 0.4
+    clear
   fi
 
   else
+  clear
   echo "Nothing new to install. Proceeding.."
   sleep 0.4
 fi
 
 # Define some options for the aria2 download manager, so some of the following download commands are easier to read.
-ARIA2_PARAMETERS="-x8 --console-log-level=error --dir $HOME/affinity_setup_tmp"
+ARIA2_PARAMETERS="-x8 --console-log-level=error --download-result=hide --summary-interval=0 --dir $HOME/affinity_setup_tmp"
 
 # Download then extract rum wine manager.
 git clone https://gitlab.com/xkero/rum.git/ $HOME/affinity_setup_tmp/rum &>/dev/null &
 spinner "Downloading rum"
 
+echo "Attempting to place binary: /usr/local/bin/rum"
 sudo cp $HOME/affinity_setup_tmp/rum/rum /usr/local/bin/rum
 
 # Download then extract custom wine binaries specifically made to run Affinity better.
 echo "Downloading Wine:"
 aria2c $ARIA2_PARAMETERS --out ElementalWarrior-wine.7z  https://github.com/woafID/LinuxCreativeSoftware/releases/download/wine9.13-p3/ElementalWarrior-wine.7z
 
+echo
 7z x $HOME/affinity_setup_tmp/ElementalWarrior-wine.7z -o$HOME/affinity_setup_tmp/ &>/dev/null &
 spinner "Extracting"
 
@@ -155,14 +195,14 @@ sudo mkdir -p "/opt/wines"
 sudo cp --recursive "$HOME/affinity_setup_tmp/ElementalWarrior-wine/wine-install" "/opt/wines/ElementalWarrior-8.14"
 
 # Link wine to fix an issue because it does not have a 64bit binary.
-sudo ln -s /opt/wines/ElementalWarrior-8.14/bin/wine /opt/wines/ElementalWarrior-8.14/bin/wine64
+sudo ln -s /opt/wines/ElementalWarrior-8.14/bin/wine /opt/wines/ElementalWarrior-8.14/bin/wine64 2>/dev/null
 
 zenity --info --text="You may get prompted to install Wine Mono, in the next section. Please proceed with installing it. Other parts of the installation will be silent. Be patient."
 
-mkdir $HOME/LinuxCreativeSoftware
+mkdir -p $HOME/LinuxCreativeSoftware
 
 # Ignore the "command not found" error. This is how it defaults to "agree".
-y | rum ElementalWarrior-8.14 $HOME/LinuxCreativeSoftware/Affinity wineboot --init &>/dev/null &
+rum ElementalWarrior-8.14 $HOME/LinuxCreativeSoftware/Affinity wineboot --init &>/dev/null &
 
 spinner "Initializing Wine"
 
@@ -179,6 +219,7 @@ killall zenity
 # You can extract these files yourself manually from any windows 10 or 11 installation. Just copy the WinMetadata folder from System32 to this path i specified.
 echo "Downloading WinMetadata..."
 aria2c $ARIA2_PARAMETERS --out winmd.7z https://archive.org/download/WinMetadata/winmd.7z
+echo
 7z x $HOME/affinity_setup_tmp/winmd.7z -o$HOME/LinuxCreativeSoftware/Affinity/drive_c/windows/system32/WinMetadata &>/dev/null &
 spinner "Extracting"
 
@@ -190,7 +231,7 @@ affinity_url="https://downloads.affinity.studio/Affinity%20x64.exe"
  echo "Downloading installer..."
  echo
  aria2c $ARIA2_PARAMETERS --out "Affinity-x64.exe" "$affinity_url"
-
+echo
 
 # We already create shortcuts for these Apps.
 # This Establishes language independence, as "Desktop" is different in various languages.
@@ -198,7 +239,7 @@ DESKTOP=$(xdg-user-dir DESKTOP)
 
 zenity --info --text="Please proceed with all of the installers."
 
-# We run the genuine setups that has been downloaded.
+# Run the setup that has been downloaded.
 rum ElementalWarrior-8.14 $HOME/LinuxCreativeSoftware/Affinity wine $HOME/affinity_setup_tmp/Affinity-x64.exe &>/dev/null &
 spinner "Installing Affinity"
 rm -f $DESKTOP/Affinity.lnk
